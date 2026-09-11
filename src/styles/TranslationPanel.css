@@ -1,0 +1,543 @@
+.translation-panel {
+  width: 360px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+
+  color: #111827;
+
+  overflow-y: auto;
+}
+
+.translation-section {
+  padding: 18px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #111827;
+}
+
+.section-heading p {
+  margin: 4px 0 0;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  color: #6b7280;
+}
+
+
+/* =========================================================
+   LIVE INDICATOR
+========================================================= */
+
+.live-indicator {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 6px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.05em;
+
+  color: #6b7280;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #16a34a;
+}
+
+
+/* =========================================================
+   CAPTIONS
+========================================================= */
+
+.caption-area {
+  min-height: 100px;
+}
+
+.caption-card {
+  position: relative;
+
+  padding: 14px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  background: #f9fafb;
+}
+
+.caption-card.interim {
+  opacity: 0.7;
+}
+
+.caption-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 8px;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  color: #6b7280;
+}
+
+.caption-text {
+  margin: 0;
+
+  font-size: 15px;
+  line-height: 1.55;
+
+  color: #111827;
+
+  word-break: break-word;
+}
+
+.caption-time {
+  display: block;
+
+  margin-top: 10px;
+
+  font-size: 10px;
+
+  color: #9ca3af;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 80px;
+
+  padding: 12px;
+
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+
+  background: #fafafa;
+
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
+
+  max-width: 240px;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #9ca3af;
+}
+
+
+/* =========================================================
+   TRANSLATION CONTROLS
+========================================================= */
+
+.translation-controls {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.translation-controls label {
+  font-size: 12px;
+  font-weight: 500;
+
+  color: #374151;
+}
+
+.translation-controls select {
+  width: 100%;
+
+  height: 38px;
+
+  padding: 0 10px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+.translation-controls select:focus {
+  border-color: #9ca3af;
+}
+
+.translation-controls select:disabled {
+  background: #f3f4f6;
+
+  cursor: not-allowed;
+}
+
+.translation-actions {
+  display: flex;
+
+  gap: 8px;
+
+  margin-top: 4px;
+}
+
+.translation-toggle,
+.translate-button {
+  height: 36px;
+
+  border-radius: 6px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.translation-toggle {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  flex: 1;
+
+  border: 1px solid #d1d5db;
+
+  background: #ffffff;
+
+  color: #4b5563;
+}
+
+.translation-toggle:hover {
+  background: #f9fafb;
+}
+
+.translation-toggle.active {
+  border-color: #9ca3af;
+
+  background: #f3f4f6;
+
+  color: #111827;
+}
+
+.toggle-indicator {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #9ca3af;
+}
+
+.translation-toggle.active
+.toggle-indicator {
+  background: #16a34a;
+}
+
+.translate-button {
+  flex: 1;
+
+  border: 1px solid #111827;
+
+  background: #111827;
+
+  color: #ffffff;
+}
+
+.translate-button:hover:not(:disabled) {
+  background: #374151;
+
+  border-color: #374151;
+}
+
+.translate-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TRANSLATION RESULT
+========================================================= */
+
+.translation-result {
+  margin-top: 14px;
+}
+
+.translation-card {
+  padding: 14px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+.translation-language-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 14px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #6b7280;
+}
+
+.language-arrow {
+  color: #9ca3af;
+}
+
+.original-text,
+.translated-text {
+  margin-top: 12px;
+}
+
+.original-text > span,
+.translated-text > span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+
+  color: #9ca3af;
+}
+
+.original-text p,
+.translated-text p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  color: #374151;
+
+  word-break: break-word;
+}
+
+.translated-text {
+  padding-top: 12px;
+
+  border-top: 1px solid #f0f0f0;
+}
+
+.translated-text p {
+  color: #111827;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   TRANSCRIPT
+========================================================= */
+
+.transcript-section {
+  flex: 1;
+}
+
+.clear-button {
+  border: 0;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: #6b7280;
+
+  font-family: inherit;
+  font-size: 11px;
+
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  color: #111827;
+}
+
+.transcript-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.transcript-item {
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.transcript-item:last-child {
+  border-bottom: 0;
+}
+
+.transcript-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 9px;
+}
+
+.transcript-header strong {
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+.transcript-header time {
+  font-size: 10px;
+
+  color: #9ca3af;
+}
+
+.transcript-original,
+.transcript-translation {
+  margin-top: 8px;
+}
+
+.transcript-original span,
+.transcript-translation span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  color: #9ca3af;
+}
+
+.transcript-original p,
+.transcript-translation p {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #4b5563;
+
+  word-break: break-word;
+}
+
+.transcript-translation p {
+  color: #111827;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.translation-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.translation-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.translation-panel::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+
+  border-radius: 3px;
+}
+
+.translation-panel::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .translation-panel {
+    width: 320px;
+  }
+}
+
+@media (max-width: 700px) {
+  .translation-panel {
+    width: 100%;
+    height: auto;
+
+    max-height: 45vh;
+
+    border-left: 0;
+    border-top: 1px solid #e5e7eb;
+  }
+}

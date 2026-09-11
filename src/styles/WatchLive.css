@@ -1,0 +1,1254 @@
+/* =========================================================
+   WAVE CALL - WATCH LIVE
+========================================================= */
+
+.watch-page {
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+
+  background: #f4f6fa;
+  color: #111827;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.watch-page *,
+.watch-page *::before,
+.watch-page *::after {
+  box-sizing: border-box;
+}
+
+
+/* HEADER */
+
+.watch-header {
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 32px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e2e6ec;
+}
+
+.watch-logo {
+  border: 0;
+  padding: 0;
+
+  background: transparent;
+  color: #111827;
+
+  font-size: 19px;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+
+/* MAIN */
+
+.watch-main {
+  width: min(1180px, calc(100% - 48px));
+  height: calc(100vh - 64px);
+
+  margin: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+/* HEADING */
+
+.watch-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+.watch-eyebrow {
+  margin: 0 0 8px;
+
+  color: #63738a;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+.watch-heading h1 {
+  margin: 0;
+
+  font-size: 38px;
+  line-height: 1;
+
+  letter-spacing: -1.7px;
+}
+
+.watch-heading p:last-child {
+  margin: 10px 0 0;
+
+  color: #687991;
+
+  font-size: 12px;
+}
+
+.watch-heading-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #dc2626;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+
+/* LAYOUT */
+
+.watch-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    290px;
+
+  overflow: hidden;
+
+  border: 1px solid #dce2e9;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+
+/* VIDEO */
+
+.watch-stage {
+  min-width: 0;
+
+  background: #171717;
+}
+
+.watch-stage-header {
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 15px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e2e6ec;
+
+  color: #687991;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.watch-video {
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 16 / 9;
+
+  max-height: calc(100vh - 250px);
+
+  overflow: hidden;
+
+  background: #171717;
+}
+
+.watch-video video {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  background: #171717;
+}
+
+
+/* PLACEHOLDER */
+
+.watch-placeholder {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #aeb7c4;
+
+  text-align: center;
+}
+
+.watch-placeholder-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 4px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #111827;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.watch-placeholder strong {
+  color: #d6dbe2;
+
+  font-size: 12px;
+}
+
+.watch-placeholder span {
+  font-size: 10px;
+}
+
+
+/* LIVE BADGE */
+
+.watch-live-badge {
+  position: absolute;
+
+  top: 14px;
+  left: 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 10px;
+
+  border-radius: 5px;
+
+  background: #ef2929;
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: .8px;
+}
+
+.watch-live-badge .status-dot {
+  width: 6px;
+  height: 6px;
+
+  background: #ffffff;
+}
+
+
+/* SIDEBAR */
+
+.watch-sidebar {
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-left: 1px solid #e2e6ec;
+}
+
+.watch-sidebar-top,
+.watch-sidebar-info {
+  padding: 24px;
+}
+
+.watch-sidebar-label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #8290a3;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1.1px;
+}
+
+.watch-sidebar h2 {
+  margin: 0;
+
+  font-size: 18px;
+
+  word-break: break-word;
+}
+
+.watch-connected {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-top: 18px;
+
+  color: #16a34a;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.watch-connected .status-dot {
+  background: #16a34a;
+}
+
+.watch-divider {
+  height: 1px;
+
+  background: #e5e9ef;
+}
+
+.watch-sidebar-info p {
+  margin: 0;
+
+  color: #687991;
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.watch-sidebar-bottom {
+  margin-top: auto;
+
+  padding: 20px 24px;
+
+  border-top: 1px solid #e2e6ec;
+}
+
+.watch-home-button {
+  width: 100%;
+  height: 39px;
+
+  border: 1px solid #d9dee6;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #111827;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.watch-home-button:hover {
+  background: #f6f8fa;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+  .watch-page {
+    height: auto;
+    overflow: auto;
+  }
+
+  .watch-header {
+    height: 58px;
+    padding: 0 16px;
+  }
+
+  .watch-main {
+    width: calc(100% - 24px);
+    height: auto;
+
+    padding: 24px 0 30px;
+  }
+
+  .watch-heading {
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 14px;
+  }
+
+  .watch-heading h1 {
+    font-size: 34px;
+  }
+
+  .watch-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .watch-sidebar {
+    border-left: 0;
+    border-top: 1px solid #e2e6ec;
+  }
+
+  .watch-video {
+    max-height: none;
+  }
+}
+
+.watch-video .live-chat {
+  z-index: 6;
+}
+
+.watch-placeholder {
+  z-index: 3;
+}
+
+.watch-video video {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================
+   VOXBRIDGE WATCH LIVE - CURRENT LAYOUT
+========================================================= */
+
+.watch-page {
+  min-height: 100vh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #f4f6fa;
+}
+
+.watch-main {
+  width: min(1180px, calc(100% - 48px));
+  min-height: calc(100vh - 64px);
+  height: auto;
+  margin: 0 auto;
+  padding: 34px 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.watch-intro {
+  margin-bottom: 18px;
+}
+
+.watch-label {
+  margin: 0 0 8px;
+  color: #63738a;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.watch-intro h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+}
+
+.watch-intro > p:last-child {
+  margin: 9px 0 0;
+  color: #687991;
+  font-size: 12px;
+}
+
+.watch-card {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #dce2e9;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.watch-status {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-bottom: 1px solid #e2e6ec;
+  color: #687991;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.watch-video {
+  position: relative;
+  width: min(100%, 960px);
+  aspect-ratio: 16 / 9;
+  height: auto;
+  max-height: none;
+  margin: 24px auto;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #171717;
+}
+
+.watch-video video {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #171717;
+}
+
+.watch-placeholder {
+  z-index: 3;
+}
+
+.watch-footer {
+  width: min(100%, 960px);
+  margin: 0 auto;
+  padding: 0 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.watch-footer > div {
+  min-width: 0;
+}
+
+.watch-footer p {
+  margin: 0 0 5px;
+  color: #8290a3;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.watch-footer strong {
+  color: #111827;
+  font-size: 11px;
+  word-break: break-word;
+}
+
+.watch-footer button {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d9dee6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.watch-footer button:hover {
+  background: #f6f8fa;
+}
+
+.watch-video .live-chat {
+  z-index: 6;
+}
+
+@media (max-width: 1000px) {
+  .watch-main {
+    width: min(100% - 32px, 960px);
+  }
+
+  .watch-video,
+  .watch-footer {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .watch-main {
+    width: calc(100% - 24px);
+    min-height: auto;
+    padding: 24px 0 30px;
+  }
+
+  .watch-intro h1 {
+    font-size: 32px;
+  }
+
+  .watch-video {
+    margin: 12px auto;
+    border-radius: 10px;
+  }
+
+  .watch-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 0 12px 18px;
+  }
+
+  .watch-footer button {
+    width: 100%;
+  }
+}
+
+/* Active stream layout */
+.watch-main {
+  width: min(960px, calc(100% - 48px));
+  height: calc(100vh - 64px);
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watch-card {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+}
+
+.watch-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: none;
+  overflow: hidden;
+  border: 1px solid #26353d;
+  border-radius: 14px;
+  background: #111a21;
+}
+
+.watch-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #111a21;
+}
+
+.watch-live-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 5;
+  padding: 7px 10px;
+  border-radius: 5px;
+  background: #ef2929;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .8px;
+}
+
+.watch-video-top-right {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.watch-stream-name,
+.watch-video-status {
+  min-width: 120px;
+  max-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 7px;
+  background: rgba(12, 18, 23, .82);
+  backdrop-filter: blur(8px);
+}
+
+.watch-stream-name span,
+.watch-video-status span {
+  display: block;
+  margin-bottom: 3px;
+  color: #9ba8b5;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .9px;
+}
+
+.watch-stream-name strong,
+.watch-video-status strong {
+  display: block;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watch-chat-show-button {
+  position: absolute;
+  right: 14px;
+  bottom: 62px;
+  z-index: 7;
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 7px;
+  background: rgba(12, 18, 23, .9);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.watch-chat-show-button:hover {
+  background: rgba(24, 33, 40, .96);
+}
+
+.watch-video-controls {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 5;
+}
+
+.watch-video-controls button {
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 7px;
+  background: rgba(12, 18, 23, .82);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.watch-video-controls button:hover {
+  background: rgba(24, 33, 40, .96);
+}
+
+.watch-placeholder {
+  z-index: 3;
+}
+
+.watch-video .live-chat {
+  z-index: 6;
+}
+
+@media (max-width: 800px) {
+  .watch-main {
+    width: calc(100% - 24px);
+    height: calc(100vh - 58px);
+    padding: 16px 0;
+  }
+
+  .watch-video {
+    border-radius: 10px;
+  }
+
+  .watch-video-top-right {
+    top: 10px;
+    right: 10px;
+    gap: 5px;
+  }
+
+  .watch-stream-name,
+  .watch-video-status {
+    min-width: 0;
+    max-width: 150px;
+    padding: 7px 8px;
+  }
+
+  .watch-live-badge {
+    top: 10px;
+    left: 10px;
+  }
+
+  .watch-video-controls {
+    left: 10px;
+    bottom: 10px;
+  }
+
+  .watch-chat-show-button {
+    right: 10px;
+    bottom: 54px;
+  }
+}
+
+@media (max-width: 520px) {
+  .watch-main {
+    width: calc(100% - 16px);
+  }
+
+  .watch-stream-name {
+    display: none;
+  }
+}
+
+.watch-player-controls {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.watch-player-controls button,
+.live-player-controls button {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 7px;
+  background: rgba(12, 18, 23, .86);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.watch-player-controls button:hover,
+.live-player-controls button:hover {
+  background: rgba(24, 33, 40, .96);
+}
+
+.watch-player-controls button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 800px) {
+  .watch-player-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .watch-player-controls button {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .watch-player-controls button {
+    padding: 0 8px;
+    font-size: 9px;
+  }
+}
+
+
+.watch-player-controls button {
+  width: 38px;
+  min-width: 38px;
+}
+
+@media (max-width: 520px) {
+  .watch-player-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+
+/* Keep viewer controls in one clean bottom row. */
+.watch-player-controls {
+  right: 14px;
+  bottom: 14px;
+  gap: 8px;
+}
+
+.watch-player-controls .watch-chat-show-button {
+  position: static;
+  right: auto;
+  bottom: auto;
+  width: auto;
+  min-width: 78px;
+  height: 38px;
+  padding: 0 12px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 800px) {
+  .watch-player-controls {
+    right: 10px;
+    bottom: 10px;
+    gap: 6px;
+  }
+
+  .watch-player-controls .watch-chat-show-button {
+    min-width: 72px;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .watch-player-controls .watch-chat-show-button {
+    min-width: 68px;
+    padding: 0 8px;
+  }
+}
+
+
+/* Volume control */
+.watch-volume-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 9px 0 0;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 7px;
+  background: rgba(12, 18, 23, .86);
+  backdrop-filter: blur(8px);
+}
+
+.watch-volume-control button {
+  width: 38px;
+  min-width: 38px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.watch-volume-control input[type="range"] {
+  width: 72px;
+  height: 4px;
+  margin: 0;
+  accent-color: #ffffff;
+  cursor: pointer;
+}
+
+.watch-volume-control input[type="range"]:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .watch-volume-control {
+    gap: 3px;
+    padding-right: 5px;
+  }
+
+  .watch-volume-control input[type="range"] {
+    width: 55px;
+  }
+}
+
+
+/* Dynamic chat sizing and fullscreen behavior */
+.watch-video .live-chat {
+  width: clamp(260px, 30%, 360px);
+  height: clamp(240px, 72%, 420px);
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 28px);
+}
+
+.watch-video:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+.watch-video:fullscreen .live-chat,
+.watch-video:fullscreen .watch-chat-show-button {
+  display: none !important;
+}
+
+.watch-video:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+.watch-video:-webkit-full-screen .live-chat,
+.watch-video:-webkit-full-screen .watch-chat-show-button {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .watch-video .live-chat {
+    width: min(350px, 48%);
+    height: min(390px, 72%);
+  }
+}
+
+@media (max-width: 640px) {
+  .watch-video .live-chat {
+    width: calc(100% - 16px);
+    max-width: calc(100% - 16px);
+    height: 58%;
+    max-height: calc(100% - 16px);
+    min-height: 200px;
+  }
+}
+
+/* Match the final LiveStream player layout. */
+.watch-main {
+  display: flex;
+  justify-content: center;
+}
+
+.watch-card {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.watch-video:not(:fullscreen) {
+  width: min(100%, 960px);
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+}
+
+.watch-video:not(:fullscreen) video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.watch-video-controls,
+.watch-player-controls {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.watch-video-controls {
+  left: 14px;
+  bottom: 14px;
+}
+
+.watch-player-controls {
+  right: 14px;
+  bottom: 14px;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.watch-player-controls > button,
+.watch-volume-control {
+  flex: 0 0 auto;
+}
+
+.watch-player-controls .watch-chat-show-button {
+  position: static;
+  right: auto;
+  bottom: auto;
+  width: auto;
+  min-width: 78px;
+  height: 38px;
+  padding: 0 12px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Smaller chat in normal view so it stays clear of the controls. */
+.watch-video:not(:fullscreen) > .live-chat {
+  right: 14px;
+  bottom: 70px;
+  z-index: 20;
+  width: min(300px, 28vw);
+  height: min(340px, 48vh);
+  max-width: calc(100% - 28px);
+}
+
+.watch-video:not(:fullscreen) > .watch-chat-show-button {
+  right: 14px;
+  bottom: 70px;
+  z-index: 20;
+}
+
+/* Fullscreen follows the same layout as LiveStream and keeps chat visible. */
+.watch-video:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  min-height: 0;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  background: #111a21;
+}
+
+.watch-video:fullscreen video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.watch-video:fullscreen .watch-live-badge {
+  top: 24px;
+  left: 24px;
+}
+
+.watch-video:fullscreen .watch-video-top-right {
+  top: 24px;
+  right: 24px;
+}
+
+.watch-video:fullscreen .watch-video-controls {
+  left: 24px;
+  bottom: 24px;
+}
+
+.watch-video:fullscreen .watch-player-controls {
+  right: 24px;
+  bottom: 24px;
+}
+
+.watch-video:fullscreen > .live-chat {
+  right: 24px;
+  bottom: 86px;
+  z-index: 20;
+  width: min(360px, 30vw);
+  height: min(420px, 55vh);
+  max-width: calc(100% - 48px);
+}
+
+.watch-video:fullscreen > .watch-chat-show-button {
+  right: 24px;
+  bottom: 86px;
+  z-index: 20;
+}
+
+.watch-video:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  min-height: 0;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  background: #111a21;
+}
+
+.watch-video:-webkit-full-screen > .live-chat {
+  right: 24px;
+  bottom: 86px;
+  z-index: 20;
+  width: min(360px, 30vw);
+  height: min(420px, 55vh);
+  max-width: calc(100% - 48px);
+}
+
+@media (max-width: 760px) {
+  .watch-video:not(:fullscreen) > .live-chat {
+    right: 10px;
+    bottom: 62px;
+    width: min(300px, calc(100% - 20px));
+    height: min(320px, 48vh);
+  }
+
+  .watch-video:not(:fullscreen) > .watch-chat-show-button {
+    right: 10px;
+    bottom: 62px;
+  }
+
+  .watch-video:fullscreen .watch-video-controls {
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .watch-video:fullscreen .watch-player-controls {
+    right: 12px;
+    bottom: 12px;
+    gap: 6px;
+  }
+
+  .watch-video:fullscreen > .live-chat {
+    right: 12px;
+    bottom: 72px;
+    width: min(360px, calc(100vw - 24px));
+    height: min(55vh, 420px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .watch-video:fullscreen > .watch-chat-show-button {
+    right: 12px;
+    bottom: 72px;
+  }
+}
+
+@media (max-width: 520px) {
+  .watch-player-controls {
+    right: 10px;
+    bottom: 10px;
+    gap: 5px;
+  }
+
+  .watch-player-controls .watch-chat-show-button {
+    min-width: 68px;
+    height: 36px;
+    padding: 0 8px;
+  }
+
+  .watch-video:not(:fullscreen) > .live-chat {
+    right: 10px;
+    bottom: 58px;
+    width: calc(100% - 20px);
+    height: min(280px, 45vh);
+  }
+
+  .watch-video:not(:fullscreen) > .watch-chat-show-button {
+    right: 10px;
+    bottom: 58px;
+  }
+}
+
+/* Keep WatchLive chat visible when the entire player enters fullscreen. */
+.watch-video:fullscreen > .live-chat,
+.watch-video:-webkit-full-screen > .live-chat {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.watch-video:fullscreen > .watch-chat-show-button,
+.watch-video:-webkit-full-screen > .watch-chat-show-button {
+  display: flex !important;
+}
+
+/* Keep the Show Chat control visible inside the fullscreen player controls. */
+.watch-video:fullscreen .watch-player-controls .watch-chat-show-button,
+.watch-video:-webkit-full-screen .watch-player-controls .watch-chat-show-button {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: static !important;
+  flex: 0 0 auto;
+}

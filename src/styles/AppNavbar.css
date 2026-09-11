@@ -1,0 +1,156 @@
+.app-navbar {
+  position: relative;
+  z-index: 20;
+  width: min(1280px, calc(100% - 48px));
+  min-height: 76px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dce7e9;
+  box-sizing: border-box;
+}
+
+.app-navbar-logo {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #101719;
+  font-family: inherit;
+  font-size: 21px;
+  font-weight: 780;
+  letter-spacing: -0.7px;
+  cursor: pointer;
+}
+
+.app-navbar-right {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.app-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.app-navbar-links button {
+  border: 0;
+  background: transparent;
+  padding: 7px 0;
+  color: #29404d;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.app-navbar-links button:hover {
+  color: #101719;
+}
+
+.app-navbar-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.app-navbar-account {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-left: 28px;
+  padding-left: 28px;
+  border-left: 1px solid #dce7e9;
+}
+
+.app-navbar-avatar {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dceff4;
+  color: #176b83;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.app-navbar-user-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-navbar-user-info strong {
+  color: #172126;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.app-navbar-user-info span {
+  max-width: 180px;
+  overflow: hidden;
+  color: #718287;
+  font-size: 11px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .app-navbar {
+    width: min(100% - 32px, 1280px);
+  }
+
+  .app-navbar-links {
+    gap: 18px;
+  }
+
+  .app-navbar-account {
+    margin-left: 18px;
+    padding-left: 18px;
+  }
+
+  .app-navbar-user-info {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-navbar {
+    min-height: 68px;
+  }
+
+  .app-navbar-logo {
+    font-size: 20px;
+  }
+
+  .app-navbar-links {
+    gap: 12px;
+  }
+
+  .app-navbar-links button {
+    font-size: 12px;
+  }
+
+  .app-navbar-account {
+    margin-left: 12px;
+    padding-left: 12px;
+  }
+
+  .app-navbar-avatar {
+    width: 34px;
+    height: 34px;
+  }
+}

@@ -1883,7 +1883,7 @@ export default function LiveStream() {
                 <div className="live-share-hint">
                   <Link2 size={15} strokeWidth={1.8} />
                   <p>
-                    After going live, Voxbridge will provide a viewer link for your audience.
+                    After going live, Voxbridge AI will provide a viewer link for your audience.
                   </p>
                 </div>
               </div>
@@ -1970,7 +1970,7 @@ export default function LiveStream() {
       {!isStreaming && (
         <footer className="live-footer">
           <strong>
-            © 2026 Voxbridge
+            © 2026 Voxbridge AI
           </strong>
 
           <span>

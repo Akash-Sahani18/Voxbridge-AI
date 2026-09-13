@@ -218,7 +218,7 @@ export default function Login() {
           className="auth-logo"
           onClick={() => navigate("/")}
         >
-          Voxbridge
+          Voxbridge AI
         </button>
 
         <button

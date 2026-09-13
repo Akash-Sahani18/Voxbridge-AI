@@ -95,7 +95,7 @@ export default function CreateRoom() {
             className="create-logo"
             onClick={() => navigate("/")}
           >
-            Voxbridge
+            Voxbridge AI
           </button>
 
           <nav className="create-nav">
@@ -297,7 +297,7 @@ export default function CreateRoom() {
         </main>
 
         <footer className="create-footer">
-          <strong>© 2026 Voxbridge</strong>
+          <strong>© 2026 Voxbridge AI</strong>
           <span>
             Communication without barriers.
           </span>

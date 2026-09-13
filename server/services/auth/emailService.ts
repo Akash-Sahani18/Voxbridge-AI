@@ -19,16 +19,16 @@ export async function sendOtpEmail(
   const isRegister = purpose === "register";
 
   const subject = isRegister
-    ? "Verify your email | Voxbridge"
-    : "Your sign-in code | Voxbridge";
+    ? "Verify your email | Voxbridge AI"
+    : "Your sign-in code | Voxbridge AI";
 
   const heading = isRegister ? "You're almost there." : "Welcome back.";
 
   const message = isRegister
-    ? "Use the verification code below to finish setting up your Voxbridge account."
-    : "Use the verification code below to securely sign in to your Voxbridge account.";
+    ? "Use the verification code below to finish setting up your Voxbridge AI account."
+    : "Use the verification code below to securely sign in to your Voxbridge AI account.";
 
-  const text = `Voxbridge
+  const text = `Voxbridge AI
 
 ${heading}
 
@@ -43,7 +43,7 @@ This code is valid for 5 minutes.
 Didn't request this?
 You can safely ignore this email.
 
-Voxbridge
+Voxbridge AI
 Connect. Communicate. Understand.`;
 
   const html = `
@@ -51,7 +51,7 @@ Connect. Communicate. Understand.`;
       <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;">
         <div style="padding:28px 32px;">
           <div style="font-size:21px;font-weight:700;">
-            Voxbridge
+            Voxbridge AI
           </div>
 
           <div style="margin-top:40px;">
@@ -90,7 +90,7 @@ Connect. Communicate. Understand.`;
 
         <div style="padding:20px 32px;border-top:1px solid #e5e7eb;">
           <div style="font-size:13px;font-weight:600;">
-            Voxbridge
+            Voxbridge AI
           </div>
 
           <div style="margin-top:4px;font-size:12px;color:#9ca3af;">

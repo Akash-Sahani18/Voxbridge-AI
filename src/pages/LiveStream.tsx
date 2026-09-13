@@ -1728,8 +1728,8 @@ export default function LiveStream() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `${roomRef.current} - Voxbridge`,
-          text: "Join my live stream on Voxbridge.",
+          title: `${roomRef.current} - Voxbridge AI`,
+          text: "Join my live stream on Voxbridge AI.",
           url: link,
         });
         return;
@@ -1960,7 +1960,7 @@ export default function LiveStream() {
                 <div className="live-share-hint">
                   <Link2 size={15} strokeWidth={1.8} />
                   <p>
-                    After going live, Voxbridge will provide a viewer link for your audience.
+                    After going live, Voxbridge AI will provide a viewer link for your audience.
                   </p>
                 </div>
               </div>
@@ -2111,7 +2111,7 @@ export default function LiveStream() {
       {!isStreaming && (
         <footer className="live-footer">
           <strong>
-            © 2026 Voxbridge
+            © 2026 Voxbridge AI
           </strong>
 
           <span>

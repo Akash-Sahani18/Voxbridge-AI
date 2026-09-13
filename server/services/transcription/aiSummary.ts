@@ -158,7 +158,7 @@ export async function generateMeetingSummary(
       })
       .join("\n");
 
-  const systemPrompt = `You are the meeting intelligence layer for Voxbridge.
+  const systemPrompt = `You are the meeting intelligence layer for Voxbridge AI.
 Summarize the provided real-time conversation transcript accurately.
 Do not invent facts, names, decisions, or action items.
 Keep the overview concise.
@@ -229,7 +229,7 @@ Preserve the meaning of the conversation even when multiple languages are presen
                 {
                   role: "user",
                   content:
-                    `Summarize this Voxbridge conversation:\n\n${transcriptText}`,
+                    `Summarize this Voxbridge AI conversation:\n\n${transcriptText}`,
                 },
               ],
             }),

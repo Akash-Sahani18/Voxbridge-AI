@@ -16,14 +16,12 @@ interface CallControlsProps {
   screenSharing: boolean;
   captionsEnabled: boolean;
   translationEnabled: boolean;
-  speechLanguage: SpeechLanguage;
   translationTargetLanguage: SpeechLanguage;
   onToggleMicrophone: () => void;
   onToggleCamera: () => void;
   onToggleScreenShare: () => void;
   onToggleCaptions: () => void;
   onToggleTranslation: () => void;
-  onChangeSpeechLanguage: (language: SpeechLanguage) => void;
   onChangeTranslationTargetLanguage: (language: SpeechLanguage) => void;
   onLeave: () => void;
 }
@@ -47,14 +45,12 @@ export default function CallControls({
   screenSharing,
   captionsEnabled,
   translationEnabled,
-  speechLanguage,
   translationTargetLanguage,
   onToggleMicrophone,
   onToggleCamera,
   onToggleScreenShare,
   onToggleCaptions,
   onToggleTranslation,
-  onChangeSpeechLanguage,
   onChangeTranslationTargetLanguage,
   onLeave,
 }: CallControlsProps) {
@@ -112,28 +108,9 @@ export default function CallControls({
 
       <div className="controls-language-group">
         <div className="language-control">
-          <label htmlFor="speech-language">Spoken</label>
-          <select
-            id="speech-language"
-            value={speechLanguage}
-            onChange={(event) =>
-              onChangeSpeechLanguage(event.target.value as SpeechLanguage)
-            }
-            className="language-select"
-            disabled={!captionsEnabled}
-          >
-            {languageOptions.map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="language-control">
-          <label htmlFor="translation-language">Translate to</label>
           <select
             id="translation-language"
+            aria-label="Translation language"
             value={translationTargetLanguage}
             onChange={(event) =>
               onChangeTranslationTargetLanguage(

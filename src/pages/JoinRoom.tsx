@@ -172,7 +172,7 @@ export default function JoinRoom() {
                 id="room-name"
                 type="text"
                 value={roomName}
-                placeholder="e.g. wave-a83f21c4"
+                placeholder="e.g. abc-defg-hij"
                 autoFocus
                 autoComplete="off"
                 maxLength={100}
@@ -238,7 +238,8 @@ export default function JoinRoom() {
             <div className="join-divider">
               <span />
               <p>
-                NEW TO VOXBRIDGE?
+                NEW TO VOXBRIDGE AI?
+                
               </p>
               <span />
             </div>
@@ -259,7 +260,7 @@ export default function JoinRoom() {
 
       <footer className="join-footer">
         <span>
-          © 2026 Voxbridge
+          © 2026 Voxbridge AI
         </span>
 
         <span>

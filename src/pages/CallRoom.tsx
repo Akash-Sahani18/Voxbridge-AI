@@ -93,6 +93,11 @@ export default function CallRoom() {
   ] = useState<Record<string, MediaStream | null>>({});
 
   const [
+    participantNames,
+    setParticipantNames,
+  ] = useState<Record<string, string>>({});
+
+  const [
     captionsEnabled,
     setCaptionsEnabled,
   ] = useState(false);
@@ -130,7 +135,6 @@ export default function CallRoom() {
 
   const [
     speechLanguage,
-    setSpeechLanguage,
   ] = useState<SpeechLanguage>(
     "en-US"
   );
@@ -769,6 +773,7 @@ export default function CallRoom() {
 
         closeAllPeers();
         setRemoteParticipants({});
+      setParticipantNames({});
       };
 
     /* =====================================================
@@ -799,8 +804,11 @@ export default function CallRoom() {
       (
         users:
           | string[]
+          | Array<{ id: string; name: string }>
           | {
-              users?: string[];
+              users?:
+                | string[]
+                | Array<{ id: string; name: string }>;
             }
       ) => {
         console.log(
@@ -808,15 +816,38 @@ export default function CallRoom() {
           users
         );
 
-        const participantIds =
+        const participantList =
           Array.isArray(users)
             ? users
             : users?.users ?? [];
 
-        const otherUsers =
-          participantIds.filter(
-            (id) => id !== socket.id
+        const participantEntries =
+          participantList.map((participant) =>
+            typeof participant === "string"
+              ? { id: participant, name: "Participant" }
+              : participant
           );
+
+        const otherParticipants =
+          participantEntries.filter(
+            (participant) => participant.id !== socket.id
+          );
+
+        const otherUsers =
+          otherParticipants.map(
+            (participant) => participant.id
+          );
+
+        setParticipantNames((previous) => {
+          const next = { ...previous };
+
+          for (const participant of otherParticipants) {
+            next[participant.id] =
+              participant.name || "Participant";
+          }
+
+          return next;
+        });
 
         setRemoteParticipants((previous) => {
           const next: Record<string, MediaStream | null> = {};
@@ -870,15 +901,31 @@ export default function CallRoom() {
        ===================================================== */
 
     const handleUserJoined =
-      (socketId: string) => {
+      (participant: string | { id: string; name: string }) => {
+        const socketId =
+          typeof participant === "string"
+            ? participant
+            : participant.id;
+
+        const name =
+          typeof participant === "string"
+            ? "Participant"
+            : participant.name || "Participant";
+
         console.log(
           "New participant joined:",
-          socketId
+          socketId,
+          name
         );
 
         if (socketId === socket.id) {
           return;
         }
+
+        setParticipantNames((previous) => ({
+          ...previous,
+          [socketId]: name,
+        }));
 
         setRemoteParticipants((previous) => ({
           ...previous,
@@ -1134,6 +1181,16 @@ export default function CallRoom() {
         closePeer(socketId);
 
         setRemoteParticipants((previous) => {
+          if (!(socketId in previous)) {
+            return previous;
+          }
+
+          const next = { ...previous };
+          delete next[socketId];
+          return next;
+        });
+
+        setParticipantNames((previous) => {
           if (!(socketId in previous)) {
             return previous;
           }
@@ -1958,30 +2015,6 @@ export default function CallRoom() {
   }, [connectionStatus]);
 
   /* =======================================================
-     CHANGE LANGUAGE
-     ======================================================= */
-
-  const changeSpeechLanguage =
-    (
-      language: SpeechLanguage
-    ) => {
-      speechLanguageRef.current =
-        language;
-
-      setSpeechLanguage(
-        language
-      );
-
-      if (
-        captionsEnabled
-      ) {
-        speechRecognition.setLanguage(
-          language
-        );
-      }
-    };
-
-  /* =======================================================
      TRANSLATION LANGUAGE
      ======================================================= */
 
@@ -2146,6 +2179,7 @@ export default function CallRoom() {
       }
 
       setRemoteParticipants({});
+      setParticipantNames({});
 
       disconnectSocket();
 
@@ -2182,6 +2216,7 @@ export default function CallRoom() {
         null;
 
       setRemoteParticipants({});
+      setParticipantNames({});
     };
   }, [clearAudioAnalyser, closeAllPeers]);
 
@@ -2206,6 +2241,7 @@ export default function CallRoom() {
 
         return {
           id,
+          name: participantNames[id] || "Participant",
           stream,
           caption: speakerCaptions[id] || "",
           translation:
@@ -2226,7 +2262,7 @@ export default function CallRoom() {
       <header className="call-header">
 
         <div className="call-brand">
-          Voxbridge
+          Voxbridge AI
         </div>
 
         <div className="call-room-name">
@@ -2298,14 +2334,12 @@ export default function CallRoom() {
         screenSharing={screenSharing}
         captionsEnabled={captionsEnabled}
         translationEnabled={translationEnabled}
-        speechLanguage={speechLanguage}
         translationTargetLanguage={translationTargetLanguage}
         onToggleMicrophone={toggleMicrophone}
         onToggleCamera={toggleCamera}
         onToggleScreenShare={toggleScreenShare}
         onToggleCaptions={toggleCaptions}
         onToggleTranslation={toggleTranslation}
-        onChangeSpeechLanguage={changeSpeechLanguage}
         onChangeTranslationTargetLanguage={changeTranslationTargetLanguage}
         onLeave={leaveCall}
       />

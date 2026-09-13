@@ -52,7 +52,7 @@ export default function AppNavbar({ className = "" }: AppNavbarProps) {
         className="app-navbar-logo"
         onClick={() => navigate("/")}
       >
-        Voxbridge
+        Voxbridge AI
       </button>
 
       <div className="app-navbar-right">

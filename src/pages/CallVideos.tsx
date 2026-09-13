@@ -7,6 +7,7 @@ import {
 
 interface RemoteParticipant {
   id: string;
+  name: string;
   stream: MediaStream | null;
   caption: string;
   translation: string;
@@ -253,7 +254,7 @@ function RemoteVideoTile({
         )}
 
       <div className="video-label">
-        Participant {participant.id.slice(-4)}
+        {participant.name}
 
         {speaking && (
           <span className="speaking-status">

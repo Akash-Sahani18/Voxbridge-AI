@@ -1170,7 +1170,7 @@ export default function WatchLive() {
                 type="button"
                 onClick={() => navigate("/")}
               >
-                Back to Voxbridge
+                Back to Voxbridge AI
               </button>
             </div>
 

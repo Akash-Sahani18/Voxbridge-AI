@@ -279,7 +279,7 @@ export default function Home() {
                   <div className="meeting-preview-header">
                     <div>
                       <span className="preview-label">
-                        VOXBRIDGE / LIVE ROOM
+                        VOXBRIDGE AI / LIVE ROOM
                       </span>
 
                       <strong>Team sync</strong>
@@ -392,7 +392,7 @@ export default function Home() {
               </h2>
 
               <p className="section-description">
-                Voxbridge brings the core tools for meetings and live
+                Voxbridge AI brings the core tools for meetings and live
                 communication together, without making the experience
                 complicated.
               </p>
@@ -463,7 +463,7 @@ export default function Home() {
               </div>
 
               <p className="workflow-description">
-                Create a room, invite people and let Voxbridge handle the
+                Create a room, invite people and let Voxbridge AI handle the
                 communication layer while you focus on the conversation.
               </p>
             </div>
@@ -534,7 +534,7 @@ export default function Home() {
                 </h2>
 
                 <p className="intelligence-description">
-                  Voxbridge can turn a conversation into structured meeting
+                  Voxbridge AI can turn a conversation into structured meeting
                   takeaways, helping you keep track of what was discussed.
                 </p>
               </div>
@@ -596,7 +596,7 @@ export default function Home() {
               </div>
 
               <h2 className="cta-title">
-                Start your next conversation with Voxbridge.
+                Start your next conversation with Voxbridge AI.
               </h2>
 
               <p className="cta-description">
@@ -625,7 +625,7 @@ export default function Home() {
                 onClick={() => go("/")}
                 type="button"
               >
-                Voxbridge
+                Voxbridge AI
               </button>
 
               <p>
@@ -754,7 +754,7 @@ export default function Home() {
 
           <div className="footer-bottom">
             <span>
-              © 2026 Voxbridge
+              © 2026 Voxbridge AI
             </span>
 
             <span>

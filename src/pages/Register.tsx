@@ -250,7 +250,7 @@ export default function Register() {
           className="auth-logo"
           onClick={() => navigate("/")}
         >
-          Voxbridge
+          Voxbridge AI
         </button>
 
         <button
@@ -271,7 +271,7 @@ export default function Register() {
           <h1>Create your account</h1>
 
           <p className="auth-card-subtitle">
-            Register to start using Voxbridge.
+            Register to start using Voxbridge AI.
           </p>
 
           <div className="auth-divider">

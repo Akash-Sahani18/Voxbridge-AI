@@ -21,7 +21,22 @@ interface MeetingParticipant {
 }
 
 function generateRoomId(): string {
-  return `wave-${crypto.randomBytes(8).toString("hex")}`;
+  const characters =
+    "abcdefghijkmnpqrstuvwxyz23456789";
+
+  const getPart = (length: number): string => {
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+      result += characters[
+        crypto.randomInt(characters.length)
+      ];
+    }
+
+    return result;
+  };
+
+  return `${getPart(3)}-${getPart(4)}-${getPart(3)}`;
 }
 
 export async function createMeeting(

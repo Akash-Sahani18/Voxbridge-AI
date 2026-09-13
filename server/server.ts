@@ -5,6 +5,8 @@ import http from "http";
 import cors from "cors";
 import { Server, Socket } from "socket.io";
 
+import { pool } from "./db/connection";
+
 import authRoutes from "./services/auth/authRoutes";
 import meetingRoutes from "./services/meeting/meetingRoutes";
 
@@ -110,7 +112,7 @@ const io = new Server(server, {
   ],
 });
 
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   const token =
     typeof socket.handshake.auth?.token ===
     "string"
@@ -129,8 +131,30 @@ io.use((socket, next) => {
     const userId =
       verifyAuthToken(token);
 
+    const result =
+      await pool.query(
+        `SELECT name
+         FROM users
+         WHERE id = $1
+         LIMIT 1`,
+        [userId]
+      );
+
+    if (!result.rowCount) {
+      return next(
+        new Error(
+          "Authenticated user was not found."
+        )
+      );
+    }
+
     socket.data.userId =
       userId;
+
+    socket.data.userName =
+      String(result.rows[0].name || "Participant")
+        .trim()
+        .slice(0, 80);
 
     next();
   } catch (error) {
@@ -312,10 +336,24 @@ io.on(
             streamTitle;
         }
 
-        const existingUsers =
+        const existingUserIds =
           Array.from(
             room.users
           );
+
+        const existingUsers =
+          existingUserIds.map((userId) => {
+            const existingSocket =
+              io.sockets.sockets.get(userId);
+
+            return {
+              id: userId,
+              name:
+                typeof existingSocket?.data.userName === "string"
+                  ? existingSocket.data.userName
+                  : "Participant",
+            };
+          });
 
         room.users.add(
           socket.id
@@ -371,7 +409,7 @@ io.on(
         ) {
           for (
             const userId of
-              existingUsers
+              existingUserIds
           ) {
             const existingSocket =
               io.sockets.sockets.get(
@@ -385,7 +423,12 @@ io.on(
             ) {
               existingSocket.emit(
                 "user-joined",
-                socket.id
+                {
+                  id: socket.id,
+                  name:
+                    socket.data.userName ||
+                    "Participant",
+                }
               );
 
               socket.emit(
@@ -428,12 +471,12 @@ io.on(
           );
 
           for (
-            const userId of
+            const existingUser of
               existingUsers
           ) {
             const user =
               io.sockets.sockets.get(
-                userId
+                existingUser.id
               );
 
             if (
@@ -442,7 +485,7 @@ io.on(
             ) {
               socket.emit(
                 "viewer-joined",
-                userId
+                existingUser.id
               );
 
               user.emit(
@@ -1344,7 +1387,7 @@ server.listen(
   () => {
     console.log("");
     console.log(
-      "Voxbridge server running"
+      "Voxbridge AI server running"
     );
     console.log(
       `http://localhost:${PORT}`

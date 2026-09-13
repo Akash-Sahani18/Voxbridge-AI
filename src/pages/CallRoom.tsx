@@ -1945,6 +1945,19 @@ export default function CallRoom() {
     };
 
   /* =======================================================
+     AUTO-START CAPTIONS
+     ======================================================= */
+
+  useEffect(() => {
+    if (
+      connectionStatus === "connected" &&
+      !captionsEnabled
+    ) {
+      startCaptions();
+    }
+  }, [connectionStatus]);
+
+  /* =======================================================
      CHANGE LANGUAGE
      ======================================================= */
 

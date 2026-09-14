@@ -596,10 +596,8 @@ The separate WebRTC load test reached 6 concurrent participants and successfully
 
 https://voxbridge.online
 
-## Author
-
-Aakash Sahani
-
-Full-Stack / Software Engineering Project
+## 👨‍💻 Author
+*Akash Sahani*  
+📫 [GitHub](https://github.com/Akash-Sahani18) | [LinkedIn](https://www.linkedin.com/in/akash-sahani-440147243)
 
 Voxbridge - Real-Time Multilingual Video Communication Platform

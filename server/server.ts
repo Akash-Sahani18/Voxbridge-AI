@@ -15,6 +15,10 @@ import {
 } from "./services/transcription/translation";
 
 import {
+  transcribeAudio,
+} from "./services/transcription/speechToText";
+
+import {
   generateMeetingSummary,
 } from "./services/transcription/aiSummary";
 
@@ -170,6 +174,88 @@ io.use(async (socket, next) => {
     );
   }
 });
+
+const LANGUAGE_SWITCH_CONFIRMATIONS = 2;
+
+function getStableSpeechLanguage(
+  socket: Socket,
+  detectedLanguage: string
+): string {
+  const candidate =
+    detectedLanguage.trim().toLowerCase();
+
+  if (!/^[a-z]{2}$/.test(candidate)) {
+    return (
+      socket.data.stableSpeechLanguage as
+        | string
+        | undefined
+    ) || "en";
+  }
+
+  const stableLanguage =
+    socket.data.stableSpeechLanguage as
+      | string
+      | undefined;
+
+  if (!stableLanguage) {
+    socket.data.stableSpeechLanguage =
+      candidate;
+    socket.data.pendingSpeechLanguage =
+      undefined;
+    socket.data.pendingSpeechLanguageCount =
+      0;
+    return candidate;
+  }
+
+  if (candidate === stableLanguage) {
+    socket.data.pendingSpeechLanguage =
+      undefined;
+    socket.data.pendingSpeechLanguageCount =
+      0;
+    return stableLanguage;
+  }
+
+  const pendingLanguage =
+    socket.data.pendingSpeechLanguage as
+      | string
+      | undefined;
+
+  if (pendingLanguage === candidate) {
+    socket.data.pendingSpeechLanguageCount =
+      Number(
+        socket.data.pendingSpeechLanguageCount || 0
+      ) + 1;
+  } else {
+    socket.data.pendingSpeechLanguage =
+      candidate;
+    socket.data.pendingSpeechLanguageCount =
+      1;
+  }
+
+  if (
+    Number(
+      socket.data.pendingSpeechLanguageCount || 0
+    ) >= LANGUAGE_SWITCH_CONFIRMATIONS
+  ) {
+    socket.data.stableSpeechLanguage =
+      candidate;
+    socket.data.pendingSpeechLanguage =
+      undefined;
+    socket.data.pendingSpeechLanguageCount =
+      0;
+
+    console.log(
+      "[SPEECH LANGUAGE] Confirmed switch:",
+      stableLanguage,
+      "->",
+      candidate
+    );
+
+    return candidate;
+  }
+
+  return stableLanguage;
+}
 
 interface TranscriptItem {
   id: string;
@@ -686,6 +772,123 @@ io.on(
           "caption",
           caption
         );
+      }
+    );
+
+    socket.on(
+      "transcribe-audio",
+      (data) => {
+        const roomId =
+          socket.data.roomId as
+            | string
+            | undefined;
+
+        if (
+          !roomId ||
+          !rooms.has(roomId) ||
+          !rooms.get(roomId)?.users.has(socket.id)
+        ) {
+          return;
+        }
+
+        const audio =
+          toUint8Array(data?.audio);
+
+        if (!audio || audio.byteLength === 0) {
+          socket.emit(
+            "speech-transcription-error",
+            {
+              message:
+                "No audio data was received for transcription.",
+            }
+          );
+          return;
+        }
+
+        if (audio.byteLength > 5 * 1024 * 1024) {
+          socket.emit(
+            "speech-transcription-error",
+            {
+              message:
+                "The audio segment is too large for transcription.",
+            }
+          );
+          return;
+        }
+
+        const sequence =
+          typeof data?.sequence === "number"
+            ? data.sequence
+            : Date.now();
+
+        const mimeType =
+          typeof data?.mimeType === "string" &&
+          data.mimeType.trim()
+            ? data.mimeType.trim()
+            : "audio/webm";
+
+        const previousQueue =
+          (socket.data.transcriptionQueue as
+            | Promise<void>
+            | undefined) ||
+          Promise.resolve();
+
+        const job = previousQueue.then(
+          async () => {
+            try {
+              const result =
+                await transcribeAudio(
+                  audio,
+                  mimeType
+                );
+
+              if (!result.text) {
+                return;
+              }
+
+              if (
+                !rooms.get(roomId)?.users.has(socket.id)
+              ) {
+                return;
+              }
+
+              const stableLanguage =
+                getStableSpeechLanguage(
+                  socket,
+                  result.language
+                );
+
+              socket.emit(
+                "speech-transcription",
+                {
+                  sequence,
+                  text: result.text,
+                  language: stableLanguage,
+                  detectedLanguage: result.language,
+                  timestamp: Date.now(),
+                }
+              );
+            } catch (error) {
+              console.error(
+                "[SPEECH TRANSCRIPTION] Failed:",
+                error
+              );
+
+              socket.emit(
+                "speech-transcription-error",
+                {
+                  message:
+                    error instanceof Error
+                      ? error.message
+                      : "Automatic speech transcription failed.",
+                }
+              );
+            }
+          }
+        );
+
+        socket.data.transcriptionQueue =
+          job.catch(() => {});
       }
     );
 
@@ -1252,6 +1455,12 @@ io.on(
     socket.on(
       "leave-room",
       () => {
+        socket.data.stableSpeechLanguage =
+          undefined;
+        socket.data.pendingSpeechLanguage =
+          undefined;
+        socket.data.pendingSpeechLanguageCount =
+          0;
         leaveRoom(socket);
       }
     );
@@ -1269,11 +1478,51 @@ io.on(
           reason
         );
 
+        socket.data.stableSpeechLanguage =
+          undefined;
+        socket.data.pendingSpeechLanguage =
+          undefined;
+        socket.data.pendingSpeechLanguageCount =
+          0;
         leaveRoom(socket);
       }
     );
   }
 );
+
+function toUint8Array(
+  value: unknown
+): Uint8Array | null {
+  if (Buffer.isBuffer(value)) {
+    return new Uint8Array(value);
+  }
+
+  if (value instanceof Uint8Array) {
+    return new Uint8Array(value);
+  }
+
+  if (value instanceof ArrayBuffer) {
+    return new Uint8Array(value);
+  }
+
+  if (
+    value &&
+    typeof value === "object" &&
+    Array.isArray(
+      (value as { data?: unknown }).data
+    )
+  ) {
+    try {
+      return Uint8Array.from(
+        (value as { data: number[] }).data
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
 
 function normalizeLanguage(
   language: string
@@ -1387,7 +1636,7 @@ server.listen(
   () => {
     console.log("");
     console.log(
-      "Voxbridge AI server running"
+      "Voxbridge server running"
     );
     console.log(
       `http://localhost:${PORT}`

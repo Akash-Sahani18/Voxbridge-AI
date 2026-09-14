@@ -11,7 +11,7 @@ export interface TranslationResponse {
   targetLanguage: string;
 }
 
-const SUPPORTED_LANGUAGES = new Set([
+const SUPPORTED_TARGET_LANGUAGES = new Set([
   "en",
   "hi",
   "bn",
@@ -24,16 +24,30 @@ const SUPPORTED_LANGUAGES = new Set([
   "pa",
 ]);
 
-function normalizeLanguage(
+function normalizeSourceLanguage(
   language: string
 ): string {
   const normalized =
     language
       ?.trim()
       .toLowerCase()
-      .split("-")[0] || "en";
+      .split(/[-_]/)[0] || "en";
 
-  return SUPPORTED_LANGUAGES.has(
+  return /^[a-z]{2}$/.test(normalized)
+    ? normalized
+    : "en";
+}
+
+function normalizeTargetLanguage(
+  language: string
+): string {
+  const normalized =
+    language
+      ?.trim()
+      .toLowerCase()
+      .split(/[-_]/)[0] || "en";
+
+  return SUPPORTED_TARGET_LANGUAGES.has(
     normalized
   )
     ? normalized
@@ -53,12 +67,12 @@ export async function translateText(
   }
 
   const source =
-    normalizeLanguage(
+    normalizeSourceLanguage(
       request.sourceLanguage
     );
 
   const target =
-    normalizeLanguage(
+    normalizeTargetLanguage(
       request.targetLanguage
     );
 

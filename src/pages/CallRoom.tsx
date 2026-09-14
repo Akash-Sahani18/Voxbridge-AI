@@ -30,7 +30,7 @@ import {
 } from "../services/webrtc";
 
 import {
-  speechRecognition,
+  autoSpeechTranscription,
   type SpeechLanguage,
 } from "../services/transcription";
 
@@ -134,12 +134,6 @@ export default function CallRoom() {
   ] = useState<Translation[]>([]);
 
   const [
-    speechLanguage,
-  ] = useState<SpeechLanguage>(
-    "en-US"
-  );
-
-  const [
     translationEnabled,
     setTranslationEnabled,
   ] = useState(false);
@@ -164,6 +158,11 @@ export default function CallRoom() {
   const [
     summaryGenerating,
     setSummaryGenerating,
+  ] = useState(false);
+
+  const [
+    mediaReady,
+    setMediaReady,
   ] = useState(false);
 
   /* =======================================================
@@ -224,9 +223,6 @@ export default function CallRoom() {
   const translationEnabledRef =
     useRef(translationEnabled);
 
-  const speechLanguageRef =
-    useRef<SpeechLanguage>(speechLanguage);
-
   const translationTargetLanguageRef =
     useRef<SpeechLanguage>(
       translationTargetLanguage
@@ -236,11 +232,6 @@ export default function CallRoom() {
     translationEnabledRef.current =
       translationEnabled;
   }, [translationEnabled]);
-
-  useEffect(() => {
-    speechLanguageRef.current =
-      speechLanguage;
-  }, [speechLanguage]);
 
   useEffect(() => {
     translationTargetLanguageRef.current =
@@ -637,6 +628,8 @@ export default function CallRoom() {
 
           localStreamRef.current =
             stream;
+
+          setMediaReady(true);
 
           setupLocalAudioAnalyser(
             stream
@@ -1772,7 +1765,7 @@ export default function CallRoom() {
   const translateCaption =
     (
       text: string,
-      language: SpeechLanguage,
+      language: string,
       socket: ReturnType<typeof getSocket>,
       captionId: string
     ) => {
@@ -1817,41 +1810,29 @@ export default function CallRoom() {
   const startCaptions =
     () => {
       console.log(
-        "Starting captions:",
-        speechLanguage
+        "Starting automatic captions."
       );
 
       const socket =
         getSocket();
 
-      if (!socket) {
+      const stream =
+        localStreamRef.current;
+
+      if (!socket || !stream) {
+        console.warn(
+          "Captions cannot start until the microphone and server connection are ready."
+        );
         return;
       }
 
-      speechRecognition.start(
-        speechLanguageRef.current,
+      autoSpeechTranscription.start(
+        stream,
+        socket,
         {
-          onInterim: (
-            text
-          ) => {
-            if (
-              !mountedRef.current
-            ) {
-              return;
-            }
-
-            setCaptionText(text);
-            const currentSocketId = socket.id;
-            if (currentSocketId) {
-              setSpeakerCaptions((previous) => ({
-                ...previous,
-                [currentSocketId]: text,
-              }));
-            }
-          },
-
           onFinal: (
-            text
+            text,
+            language
           ) => {
             if (
               !mountedRef.current
@@ -1881,17 +1862,19 @@ export default function CallRoom() {
             lastCaptionRef.current =
               cleanText;
 
-            setCaptionText(cleanText);
-            const currentSocketId = socket.id;
+            setCaptionText(
+              cleanText
+            );
+
+            const currentSocketId =
+              socket.id;
+
             if (currentSocketId) {
               setSpeakerCaptions((previous) => ({
                 ...previous,
                 [currentSocketId]: cleanText,
               }));
             }
-
-            const activeLanguage =
-              speechLanguageRef.current;
 
             const captionId =
               `${socket.id}-${Date.now()}`;
@@ -1900,7 +1883,7 @@ export default function CallRoom() {
               "[CAPTION] Final caption:",
               {
                 captionId,
-                language: activeLanguage,
+                language,
                 text: cleanText,
               }
             );
@@ -1911,13 +1894,13 @@ export default function CallRoom() {
                 roomId: actualRoom,
                 captionId,
                 text: cleanText,
-                language: activeLanguage,
+                language,
               }
             );
 
             translateCaption(
               cleanText,
-              activeLanguage,
+              language,
               socket,
               captionId
             );
@@ -1934,17 +1917,20 @@ export default function CallRoom() {
           },
 
           onEnd: () => {
-            /*
-             * speechRecognition service
-             * controls restarting.
-             */
+            if (
+              mountedRef.current
+            ) {
+              setCaptionsEnabled(
+                false
+              );
+            }
           },
 
           onError: (
             error
           ) => {
             console.error(
-              "Speech recognition error:",
+              "Speech transcription error:",
               error
             );
 
@@ -1958,10 +1944,6 @@ export default function CallRoom() {
           },
         }
       );
-
-      setCaptionsEnabled(
-        true
-      );
     };
 
   /* =======================================================
@@ -1974,7 +1956,7 @@ export default function CallRoom() {
         "Stopping captions."
       );
 
-      speechRecognition.stop();
+      autoSpeechTranscription.stop();
 
       setCaptionsEnabled(
         false
@@ -2008,11 +1990,12 @@ export default function CallRoom() {
   useEffect(() => {
     if (
       connectionStatus === "connected" &&
+      mediaReady &&
       !captionsEnabled
     ) {
       startCaptions();
     }
-  }, [connectionStatus]);
+  }, [connectionStatus, mediaReady]);
 
   /* =======================================================
      TRANSLATION LANGUAGE
@@ -2136,7 +2119,7 @@ export default function CallRoom() {
         "Leaving call..."
       );
 
-      speechRecognition.stop();
+      autoSpeechTranscription.stop();
 
       try {
         const socket =
@@ -2168,6 +2151,8 @@ export default function CallRoom() {
       localStreamRef.current =
         null;
 
+      setMediaReady(false);
+
       screenStreamRef.current =
         null;
 
@@ -2195,7 +2180,7 @@ export default function CallRoom() {
       mountedRef.current =
         false;
 
-      speechRecognition.stop();
+      autoSpeechTranscription.stop();
 
       closeAllPeers();
 
@@ -2211,6 +2196,8 @@ export default function CallRoom() {
 
       localStreamRef.current =
         null;
+
+      setMediaReady(false);
 
       screenStreamRef.current =
         null;
@@ -2262,7 +2249,7 @@ export default function CallRoom() {
       <header className="call-header">
 
         <div className="call-brand">
-          Voxbridge AI
+          Voxbridge
         </div>
 
         <div className="call-room-name">

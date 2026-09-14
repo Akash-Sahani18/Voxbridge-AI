@@ -1,311 +1,195 @@
-export type SpeechLanguage =
-  | "en-US"
-  | "hi-IN"
-  | "bn-IN"
-  | "ta-IN"
-  | "te-IN"
-  | "mr-IN"
-  | "gu-IN"
-  | "kn-IN"
-  | "ml-IN"
-  | "pa-IN";
+const GROQ_TRANSCRIPTION_URL =
+  "https://api.groq.com/openai/v1/audio/transcriptions";
 
-export interface SpeechRecognitionCallbacks {
-  onFinal: (text: string) => void;
-  onInterim?: (text: string) => void;
-  onStart?: () => void;
-  onEnd?: () => void;
-  onError?: (error: string) => void;
+const DEFAULT_MODEL =
+  "whisper-large-v3-turbo";
+
+export interface AudioTranscriptionResult {
+  text: string;
+  language: string;
 }
 
-class ContinuousSpeechRecognition {
-  private recognition: any = null;
+function normalizeDetectedLanguage(
+  language: unknown
+): string {
+  if (typeof language !== "string") {
+    return "en";
+  }
 
-  private enabled = false;
+  const normalized = language
+    .trim()
+    .toLowerCase()
+    .split(/[-_]/)[0];
 
-  private restarting = false;
+  return /^[a-z]{2}$/.test(normalized)
+    ? normalized
+    : "en";
+}
 
-  private language: SpeechLanguage = "en-US";
+export async function transcribeAudio(
+  audio: Uint8Array,
+  mimeType: string
+): Promise<AudioTranscriptionResult> {
+  const apiKey =
+    process.env.GROQ_API_KEY?.trim();
 
-  private callbacks: SpeechRecognitionCallbacks = {
-    onFinal: () => {},
+  if (!apiKey) {
+    throw new Error(
+      "GROQ_API_KEY is not configured on the server."
+    );
+  }
+
+  if (audio.byteLength === 0) {
+    throw new Error(
+      "Audio transcription received an empty audio segment."
+    );
+  }
+
+  const safeMimeType =
+    mimeType?.trim() ||
+    "audio/webm";
+
+  const extension =
+    safeMimeType.includes("ogg")
+      ? "ogg"
+      : safeMimeType.includes("mp4")
+        ? "mp4"
+        : "webm";
+
+  const bytes = new Uint8Array(
+    audio
+  );
+
+  const audioBlob = new Blob(
+    [bytes.buffer],
+    {
+      type: safeMimeType,
+    }
+  );
+
+  const form = new FormData();
+
+  form.append(
+    "file",
+    audioBlob,
+    `voxbridge-${Date.now()}.${extension}`
+  );
+
+  form.append(
+    "model",
+    DEFAULT_MODEL
+  );
+
+  form.append(
+    "response_format",
+    "verbose_json"
+  );
+
+  form.append(
+    "temperature",
+    "0"
+  );
+
+  const MAX_RATE_LIMIT_RETRIES = 2;
+
+  let response: Response | null = null;
+
+  for (
+    let attempt = 0;
+    attempt <= MAX_RATE_LIMIT_RETRIES;
+    attempt++
+  ) {
+    response =
+      await fetch(
+        GROQ_TRANSCRIPTION_URL,
+        {
+          method: "POST",
+          headers: {
+            Authorization:
+              `Bearer ${apiKey}`,
+          },
+          body: form,
+        }
+      );
+
+    if (response.status !== 429) {
+      break;
+    }
+
+    if (attempt === MAX_RATE_LIMIT_RETRIES) {
+      break;
+    }
+
+    const retryAfter =
+      Number(
+        response.headers.get("retry-after") ||
+          ""
+      );
+
+    const delayMs =
+      Number.isFinite(retryAfter) &&
+      retryAfter > 0
+        ? retryAfter * 1000
+        : 3000;
+
+    console.warn(
+      `[SPEECH TRANSCRIPTION] Groq rate limit reached. Retrying in ${Math.ceil(delayMs / 1000)}s.`
+    );
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, delayMs)
+    );
+  }
+
+  if (!response) {
+    throw new Error(
+      "Groq speech transcription did not return a response."
+    );
+  }
+
+  if (!response.ok) {
+    const details =
+      await response.text();
+
+    throw new Error(
+      `Groq speech transcription failed with status ${response.status}: ${details.slice(0, 500)}`
+    );
+  }
+
+  const data = (await response.json()) as {
+    text?: string;
+    language?: string;
   };
 
-  constructor() {
-    if (typeof window === "undefined") {
-      return;
-    }
+  const text =
+    typeof data.text === "string"
+      ? data.text.trim()
+      : "";
 
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      console.error(
-        "Speech Recognition is not supported by this browser."
-      );
-
-      return;
-    }
-
-    this.recognition =
-      new SpeechRecognition();
-
-    this.recognition.continuous = true;
-
-    this.recognition.interimResults = true;
-
-    this.recognition.maxAlternatives = 1;
-
-    this.setupEvents();
-  }
-
-  private setupEvents() {
-    if (!this.recognition) {
-      return;
-    }
-
-    this.recognition.onstart = () => {
-      this.restarting = false;
-
-      this.callbacks.onStart?.();
-    };
-
-    this.recognition.onresult = (
-      event: any
-    ) => {
-      let interimText = "";
-
-      let finalText = "";
-
-      for (
-        let i = event.resultIndex;
-        i < event.results.length;
-        i++
-      ) {
-        const result =
-          event.results[i];
-
-        const text =
-          result?.[0]?.transcript || "";
-
-        if (result.isFinal) {
-          finalText +=
-            " " + text;
-        } else {
-          interimText +=
-            " " + text;
-        }
-      }
-
-      const cleanedInterim =
-        interimText
-          .replace(/\s+/g, " ")
-          .trim();
-
-      const cleanedFinal =
-        finalText
-          .replace(/\s+/g, " ")
-          .trim();
-
-      if (cleanedInterim) {
-        this.callbacks.onInterim?.(
-          cleanedInterim
-        );
-      }
-
-      if (cleanedFinal) {
-        this.callbacks.onFinal(
-          cleanedFinal
-        );
-      }
-    };
-
-    this.recognition.onerror = (
-      event: any
-    ) => {
-      const error =
-        event?.error ||
-        "unknown";
-
-      if (
-        error === "no-speech" ||
-        error === "aborted"
-      ) {
-        return;
-      }
-
-      if (
-        error === "audio-capture"
-      ) {
-        this.callbacks.onError?.(
-          "Microphone could not be accessed."
-        );
-
-        return;
-      }
-
-      if (
-        error === "not-allowed"
-      ) {
-        this.enabled = false;
-
-        this.callbacks.onError?.(
-          "Microphone permission was denied."
-        );
-
-        return;
-      }
-
-      if (
-        error === "service-not-allowed"
-      ) {
-        this.callbacks.onError?.(
-          "Speech recognition service is not available."
-        );
-
-        return;
-      }
-
-      this.callbacks.onError?.(
-        error
-      );
-    };
-
-    this.recognition.onend = () => {
-      this.callbacks.onEnd?.();
-
-      if (
-        this.enabled &&
-        !this.restarting
-      ) {
-        this.restart();
-      }
+  if (!text) {
+    return {
+      text: "",
+      language:
+        normalizeDetectedLanguage(
+          data.language
+        ),
     };
   }
 
-  private restart() {
-    if (
-      !this.recognition ||
-      !this.enabled ||
-      this.restarting
-    ) {
-      return;
-    }
+  const language =
+    normalizeDetectedLanguage(
+      data.language
+    );
 
-    this.restarting = true;
+  console.log(
+    "[SPEECH TRANSCRIPTION] Detected:",
+    language,
+    "Text:",
+    text
+  );
 
-    window.setTimeout(() => {
-      if (
-        !this.recognition ||
-        !this.enabled
-      ) {
-        this.restarting = false;
-
-        return;
-      }
-
-      try {
-        this.recognition.lang =
-          this.language;
-
-        this.recognition.start();
-      } catch {
-        this.restarting = false;
-
-        if (this.enabled) {
-          window.setTimeout(() => {
-            this.restart();
-          }, 1000);
-        }
-      }
-    }, 300);
-  }
-
-  start(
-    language: SpeechLanguage,
-    callbacks: SpeechRecognitionCallbacks
-  ) {
-    if (!this.recognition) {
-      callbacks.onError?.(
-        "Speech Recognition is not supported by this browser."
-      );
-
-      return;
-    }
-
-    this.language =
-      language;
-
-    this.callbacks =
-      callbacks;
-
-    this.enabled = true;
-
-    this.restarting = false;
-
-    this.recognition.lang =
-      language;
-
-    try {
-      this.recognition.start();
-    } catch {
-      if (
-        this.enabled
-      ) {
-        this.restart();
-      }
-    }
-  }
-
-  stop() {
-    this.enabled = false;
-
-    this.restarting = false;
-
-    if (!this.recognition) {
-      return;
-    }
-
-    try {
-      this.recognition.stop();
-    } catch {
-    }
-  }
-
-  setLanguage(
-    language: SpeechLanguage
-  ) {
-    this.language =
-      language;
-
-    if (!this.enabled) {
-      return;
-    }
-
-    this.restarting = false;
-
-    try {
-      this.recognition?.stop();
-    } catch {
-    }
-
-    window.setTimeout(() => {
-      if (!this.enabled) {
-        return;
-      }
-
-      this.start(
-        language,
-        this.callbacks
-      );
-    }, 300);
-  }
-
-  isRunning() {
-    return this.enabled;
-  }
+  return {
+    text,
+    language,
+  };
 }
-
-export const speechRecognition =
-  new ContinuousSpeechRecognition();

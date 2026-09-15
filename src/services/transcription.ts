@@ -67,6 +67,10 @@ class AutomaticSpeechTranscription {
 
   private sequence = 0;
 
+  private vadCheckCount = 0;
+
+  private vadSpeakingCount = 0;
+
   private handleTranscription = (data: {
     sequence?: number;
     text?: string;
@@ -161,6 +165,13 @@ class AutomaticSpeechTranscription {
     this.callbacks = callbacks;
     this.enabled = true;
     this.sequence = 0;
+    this.vadCheckCount = 0;
+    this.vadSpeakingCount = 0;
+
+    console.log("[SpeechTranscription][VAD] start()", {
+      audioTracks: audioTracks.length,
+      socketConnected: socket.connected,
+    });
 
     socket.on(
       "speech-transcription",
@@ -271,6 +282,11 @@ class AutomaticSpeechTranscription {
   }
 
   private startVoiceMonitor() {
+    console.log("[SpeechTranscription][VAD] startVoiceMonitor()", {
+      enabled: this.enabled,
+      hasStream: Boolean(this.stream),
+    });
+
     if (!this.enabled || !this.stream) {
       return;
     }
@@ -357,12 +373,30 @@ class AutomaticSpeechTranscription {
       sum / buffer.length
     );
 
+    this.vadCheckCount += 1;
+
     const threshold = Math.max(
       MIN_RMS,
       this.noiseFloor * NOISE_MULTIPLIER
     );
 
     const speaking = rms >= threshold;
+
+    if (speaking) {
+      this.vadSpeakingCount += 1;
+    }
+
+    if (this.vadCheckCount <= 10 || this.vadCheckCount % 20 === 0) {
+      console.log("[SpeechTranscription][VAD] sample", {
+        check: this.vadCheckCount,
+        rms: Number(rms.toFixed(6)),
+        noiseFloor: Number(this.noiseFloor.toFixed(6)),
+        threshold: Number(threshold.toFixed(6)),
+        speaking,
+        recorder: Boolean(this.recorder),
+        speakingCount: this.vadSpeakingCount,
+      });
+    }
 
     if (!this.recorder && !speaking) {
       this.noiseFloor =
@@ -372,6 +406,7 @@ class AutomaticSpeechTranscription {
 
     if (!this.recorder) {
       if (speaking) {
+        console.log("[SpeechTranscription][VAD] SPEECH DETECTED -> startRecording()");
         this.startRecording();
       }
       return;
@@ -434,6 +469,11 @@ class AutomaticSpeechTranscription {
 
     const mimeType =
       this.getMimeType();
+
+    console.log("[SpeechTranscription][VAD] startRecording()", {
+      mimeType,
+      hasStream: Boolean(this.stream),
+    });
 
     let recorder: MediaRecorder;
 

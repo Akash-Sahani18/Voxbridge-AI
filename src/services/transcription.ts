@@ -540,11 +540,26 @@ class AutomaticSpeechTranscription {
         }
       );
 
+      console.log("[SpeechTranscription][SEND] recorder stopped", {
+        sequence,
+        blobSize: blob.size,
+        blobType: blob.type,
+        enabled: this.enabled,
+        socketConnected: this.socket?.connected ?? false,
+        chunkCount: chunks.length,
+      });
+
       if (
         this.enabled &&
         blob.size > 0 &&
         this.socket?.connected
       ) {
+        console.log("[SpeechTranscription][SEND] emitting transcribe-audio", {
+          sequence,
+          blobSize: blob.size,
+          blobType: blob.type,
+        });
+
         this.socket.emit(
           "transcribe-audio",
           {
@@ -556,6 +571,13 @@ class AutomaticSpeechTranscription {
             audio: blob,
           }
         );
+      } else {
+        console.warn("[SpeechTranscription][SEND] not emitted", {
+          sequence,
+          blobSize: blob.size,
+          enabled: this.enabled,
+          socketConnected: this.socket?.connected ?? false,
+        });
       }
     };
 

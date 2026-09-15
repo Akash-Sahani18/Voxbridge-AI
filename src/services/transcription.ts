@@ -357,18 +357,18 @@ class AutomaticSpeechTranscription {
       sum / buffer.length
     );
 
-    if (!this.recorder) {
-      this.noiseFloor =
-        this.noiseFloor * 0.92 +
-        rms * 0.08;
-    }
-
     const threshold = Math.max(
       MIN_RMS,
       this.noiseFloor * NOISE_MULTIPLIER
     );
 
     const speaking = rms >= threshold;
+
+    if (!this.recorder && !speaking) {
+      this.noiseFloor =
+        this.noiseFloor * 0.92 +
+        rms * 0.08;
+    }
 
     if (!this.recorder) {
       if (speaking) {

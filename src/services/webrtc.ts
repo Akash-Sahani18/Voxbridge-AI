@@ -9,6 +9,9 @@ const ICE_SERVERS: RTCConfiguration = {
   ],
 };
 
+const VIDEO_MAX_BITRATE = 750_000;
+const VIDEO_MAX_FRAMERATE = 30;
+
 
 /*
  * Camera + microphone
@@ -57,6 +60,35 @@ export async function getScreenMedia(): Promise<MediaStream> {
     video: true,
     audio: true,
   });
+}
+
+
+/*
+ * Keep each WebRTC video sender bounded so mesh rooms do not
+ * consume excessive upload bandwidth per participant.
+ */
+async function limitVideoSender(
+  sender: RTCRtpSender
+): Promise<void> {
+  try {
+    const parameters = sender.getParameters();
+    const encodings = parameters.encodings?.length
+      ? parameters.encodings
+      : [{}];
+
+    parameters.encodings = encodings.map((encoding) => ({
+      ...encoding,
+      maxBitrate: VIDEO_MAX_BITRATE,
+      maxFramerate: VIDEO_MAX_FRAMERATE,
+    }));
+
+    await sender.setParameters(parameters);
+  } catch (error) {
+    console.warn(
+      "Unable to apply WebRTC video bitrate limit:",
+      error
+    );
+  }
 }
 
 
@@ -131,10 +163,14 @@ export function addLocalTracks(
 ): void {
   stream.getTracks().forEach(
     (track) => {
-      peer.addTrack(
+      const sender = peer.addTrack(
         track,
         stream
       );
+
+      if (track.kind === "video") {
+        void limitVideoSender(sender);
+      }
     }
   );
 }
@@ -214,5 +250,6 @@ export async function replaceVideoTrack(
     await sender.replaceTrack(
       videoTrack
     );
+    await limitVideoSender(sender);
   }
 }
